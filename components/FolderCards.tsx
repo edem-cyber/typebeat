@@ -5,11 +5,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import CardSpotlight from './CardSpotlight';
 
-const FolderCards = ({ prompts }) => {
-  const [selectedPrompt, setSelectedPrompt] = useState(null);
-  const [generatedBeats, setGeneratedBeats] = useState([]);
+const FolderCards = ({ prompts }: { prompts: string[] }) => {
+  const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null);
+  const [generatedBeats, setGeneratedBeats] = useState<Array<{ id: number; title: string; waveform: string }>>([]);
 
-  const handlePromptClick = (prompt) => {
+  const handlePromptClick = (prompt: string) => {
     setSelectedPrompt(prompt);
     // TODO: Implement beat generation logic
     setGeneratedBeats([
@@ -60,7 +60,7 @@ const FolderCards = ({ prompts }) => {
   );
 };
 
-const FolderIcon = ({ className }) => (
+const FolderIcon = ({ className }: { className: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     fill="none"

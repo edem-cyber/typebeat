@@ -2,7 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
-import { Sidebar } from "@/components/Sidebar";
+// import { Sidebar } from "@/components/Sidebar";
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,7 +27,7 @@ export default function RootLayout({
           enableColorScheme={false}
         >
           <div className="flex h-screen">
-            <Sidebar />
+            {/* <Sidebar /> */}
             <main className="flex-1 overflow-y-auto">
               {children}
             </main>

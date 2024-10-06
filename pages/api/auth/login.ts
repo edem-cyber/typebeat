@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (error) throw error;
 
       res.status(200).json({ message: 'Login successful', user: data.user });
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   } else {

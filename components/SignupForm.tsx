@@ -24,7 +24,7 @@ export function SignupForm() {
       if (error) throw error;
       console.log("User signed up:", data);
       router.push("/");
-    } catch (error) {
+    } catch (error: any) {
       setError(error.message);
     }
   };
@@ -36,7 +36,11 @@ export function SignupForm() {
       });
       if (error) throw error;
     } catch (error) {
-      setError(error.message);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     }
   };
 
@@ -54,9 +58,9 @@ export function SignupForm() {
       <form className="my-8" onSubmit={handleSubmit}>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="email">Email Address</Label>
-          <Input 
-            id="email" 
-            placeholder="johndoe@example.com" 
+          <Input
+            id="email"
+            placeholder="johndoe@example.com"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -64,9 +68,9 @@ export function SignupForm() {
         </LabelInputContainer>
         <LabelInputContainer className="mb-8">
           <Label htmlFor="password">Password</Label>
-          <Input 
-            id="password" 
-            placeholder="••••••••" 
+          <Input
+            id="password"
+            placeholder="••••••••"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
