@@ -6,6 +6,7 @@ import { PromptCardStack } from '@/components/PromptCardStack';
 import { api } from '@/lib/api';
 import { DashboardSidebar } from '@/components/DashboardSidebar';
 import { generatePrompts } from '@/lib/gemini';
+import { MusicGenerator } from '@/components/MusicGenerator';
 
 interface Prompt {
   id: number;
@@ -63,10 +64,14 @@ export default function Dashboard() {
         {activePage === 'home' && (
           <div>
             <h1 className="text-3xl font-bold mb-8 text-white">Welcome to AI Beats, {user.email}</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {prompts.map((prompt) => (
-                <PromptCardStack key={prompt.id} prompt={prompt} />
-              ))}
+            <MusicGenerator />
+            <div className="mt-12">
+              <h2 className="text-2xl font-bold mb-6 text-white">Popular Prompts</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {prompts.map((prompt) => (
+                  <PromptCardStack key={prompt.id} prompt={prompt} />
+                ))}
+              </div>
             </div>
           </div>
         )}
