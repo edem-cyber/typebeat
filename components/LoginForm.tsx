@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -20,20 +26,17 @@ export function LoginForm() {
 
   const handleOAuthLogin = async (provider: 'github' | 'google') => {
     try {
-      setIsCallbackModalOpen(true);
-      const response = await fetch(`/api/auth/login/${provider}`, {
-        method: 'POST',
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
       });
 
-      if (!response.ok) {
-        throw new Error(`${provider} login failed`);
-      }
+      if (error) throw error;
 
-      const data = await response.json();
-      console.log('Redirecting to:', data.url); // Log the URL
-      window.location.href = data.url;
+      // The user will be redirected to the provider's login page
     } catch (error) {
-      setIsCallbackModalOpen(false);
       if (error instanceof Error) {
         setError(error.message);
       } else {

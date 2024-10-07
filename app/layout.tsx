@@ -7,8 +7,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'AI Typebeat Generator',
-  description: 'Generate type beats using AI',
+  title: 'AI Beats',
+  description: 'Generate AI-powered beats',
 };
 
 export default function RootLayout({
@@ -17,23 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-          enableColorScheme={false}
-        >
-          <div className="flex h-screen">
-            {/* <Sidebar /> */}
-            <main className="flex-1 overflow-y-auto">
-              {children}
-            </main>
-          </div>
-        </ThemeProvider>
-      </body>
+    <html lang="en" className="dark">
+      <body className={`${inter.className} bg-gray-900 text-white`}>{children}</body>
     </html>
   );
 }

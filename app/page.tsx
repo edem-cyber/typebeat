@@ -1,49 +1,77 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Sidebar, SidebarLink } from '@/components/ui/sidebar';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { IconLogin, IconLogin2, IconLogout, IconMusic, IconSearch, IconSettings } from '@tabler/icons-react';
+import { PromptCardStack } from '@/components/PromptCardStack';
+import { api } from '@/lib/api';
+import { DashboardSidebar } from '@/components/DashboardSidebar';
+import { generatePrompts } from '@/lib/gemini';
 
-const MainPage = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+interface Prompt {
+  id: number;
+  prompt: string;
+  description: string;
+}
+
+export default function Dashboard() {
+  const [user, setUser] = useState<any>(null);
+  const [activePage, setActivePage] = useState('home');
+  const [prompts, setPrompts] = useState<Prompt[]>([]);
   const router = useRouter();
 
   useEffect(() => {
-    // Check user authentication status (this is just a placeholder)
-    const checkAuth = async () => {
-      // Replace with your actual authentication check logic
-      const response = await fetch('/api/auth/check'); // Example API call
-      const user = await response.json();
-      setIsLoggedIn(user.isLoggedIn);
+    const checkUser = async () => {
+      try {
+        const user = await api.auth.getUser();
+        if (user) {
+          setUser(user);
+          fetchPrompts();
+        } else {
+          router.push('/login');
+        }
+      } catch (error) {
+        console.error('Error checking user:', error);
+        router.push('/login');
+      }
     };
-    checkAuth();
-  }, []);
 
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/login'); // Redirect to login page after logout
+    checkUser();
+  }, [router]);
+
+  const fetchPrompts = async () => {
+    try {
+      const generatedPrompts = await generatePrompts(8);
+      const formattedPrompts = generatedPrompts.map((prompt, index) => ({
+        id: index + 1,
+        prompt,
+        description: "AI-generated music production prompt",
+      }));
+      setPrompts(formattedPrompts);
+    } catch (error) {
+      console.error('Error generating prompts:', error);
+    }
   };
 
-  const links = isLoggedIn
-    ? [
-        { label: 'My Beats', href: '/my-beats', icon: <IconMusic /> },
-        { label: 'Explore', href: '/explore', icon: <IconSearch /> },
-        { label: 'Settings', href: '/settings', icon: <IconSettings /> },
-        { label: 'Logout', href: '#', icon: <IconLogout />, onClick: handleLogout },
-      ]
-    : [
-        { label: 'Login', href: '/login', icon: <IconLogin /> },
-        { label: 'Signup', href: '/signup', icon: <IconLogin2 /> },
-      ];
+  if (!user) {
+    return <div className="text-white">Loading...</div>;
+  }
 
   return (
-    <Sidebar>
-      {links.map((link) => (
-        <SidebarLink key={link.label} link={link} />
-      ))}
-    </Sidebar>
+    <div className="flex h-screen bg-gray-900">
+      <DashboardSidebar user={user} onPageChange={setActivePage} />
+      <main className="flex-1 overflow-y-auto p-8">
+        {activePage === 'home' && (
+          <div>
+            <h1 className="text-3xl font-bold mb-8 text-white">Welcome to AI Beats, {user.email}</h1>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {prompts.map((prompt) => (
+                <PromptCardStack key={prompt.id} prompt={prompt} />
+              ))}
+            </div>
+          </div>
+        )}
+        {/* ... other page content ... */}
+      </main>
+    </div>
   );
-};
-
-export default MainPage;
+}
